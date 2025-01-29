@@ -24,8 +24,7 @@ enum WEEKDAYS {
 }
 
 enum SESSION_STATUS {
-  PENDING
-  CONFIRMED
+  SCHEDULED
   COMPLETED
   CANCELLED
 }
@@ -77,7 +76,7 @@ model Session {
   teacher      User           @relation(fields: [teacher_id], references: [id], onDelete: Cascade, name: "TeacherSession")
   learner_id   String
   learner      User           @relation(fields: [learner_id], references: [id], onDelete: Cascade, name: "LearnerSession")
-  session_date DateTime
+  session_date String
   start_time   String
   end_time     String
   status       SESSION_STATUS
