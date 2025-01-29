@@ -41,11 +41,14 @@ model User {
   email            String    @unique @db.VarChar(100)
   password         String
   role             USER_ROLE
+  profile          String?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   Review           Review[]
-  teachingSessions Session[] @relation("TeacherSession")
-  learningSessions Session[] @relation("LearnerSession")
+  TeachingSessions Session[] @relation("TeacherSession")
+  LearningSessions Session[] @relation("LearnerSession")
+  isDeleted        Boolean   @default(false)
+  Skill            Skill[]
 
   @@map("users")
 }
@@ -53,10 +56,14 @@ model User {
 model Skill {
   id          String    @id @default(uuid())
   name        String    @db.VarChar(255)
+  user_id     String
+  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   description String
+  image       String?
   category    String    @db.VarChar(255)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  isDeleted   Boolean   @default(false)
   Session     Session[]
 
   @@map("skills")
@@ -76,6 +83,7 @@ model Session {
   status       SESSION_STATUS
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+  isDeleted    Boolean        @default(false)
 
   @@map("sessions")
 }
@@ -87,8 +95,11 @@ model Availability {
   start_time String
   end_time   String
   status     AVAILABILITY_STATUS
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  isDeleted  Boolean             @default(false)
+
+  @@map("availabilities")
 }
 
 model Review {
@@ -99,6 +110,7 @@ model Review {
   feedback    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  isDeleted   Boolean  @default(false)
 
   @@map("reviews")
 }

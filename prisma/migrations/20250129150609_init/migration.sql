@@ -17,8 +17,10 @@ CREATE TABLE "users" (
     "email" VARCHAR(100) NOT NULL,
     "password" TEXT NOT NULL,
     "role" "USER_ROLE" NOT NULL,
+    "profile" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -27,10 +29,13 @@ CREATE TABLE "users" (
 CREATE TABLE "skills" (
     "id" TEXT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
+    "user_id" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "image" TEXT,
     "category" VARCHAR(255) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "skills_pkey" PRIMARY KEY ("id")
 );
@@ -47,12 +52,13 @@ CREATE TABLE "sessions" (
     "status" "SESSION_STATUS" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "sessions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Availability" (
+CREATE TABLE "availabilities" (
     "id" TEXT NOT NULL,
     "teacher_id" TEXT NOT NULL,
     "day" "WEEKDAYS" NOT NULL,
@@ -61,8 +67,9 @@ CREATE TABLE "Availability" (
     "status" "AVAILABILITY_STATUS" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
-    CONSTRAINT "Availability_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "availabilities_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -73,12 +80,16 @@ CREATE TABLE "reviews" (
     "feedback" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- AddForeignKey
+ALTER TABLE "skills" ADD CONSTRAINT "skills_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_skill_id_fkey" FOREIGN KEY ("skill_id") REFERENCES "skills"("id") ON DELETE CASCADE ON UPDATE CASCADE;
