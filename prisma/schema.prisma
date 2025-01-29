@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum USER_ROLE {
+  LEARNER
+  TEACHER
+  ADMIN
+}
+
+enum WEEKDAYS {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum SESSION_STATUS {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum AVAILABILITY_STATUS {
+  AVAILABLE
+  NOT_AVAILABLE
+}
+
+model User {
+  id               String    @id @default(uuid())
+  name             String    @db.VarChar(255)
+  email            String    @unique @db.VarChar(100)
+  password         String
+  role             USER_ROLE
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  Review           Review[]
+  teachingSessions Session[] @relation("TeacherSession")
+  learningSessions Session[] @relation("LearnerSession")
+
+  @@map("users")
+}
+
+model Skill {
+  id          String    @id @default(uuid())
+  name        String    @db.VarChar(255)
+  description String
+  category    String    @db.VarChar(255)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Session     Session[]
+
+  @@map("skills")
+}
+
+model Session {
+  id           String         @id @default(uuid())
+  skill_id     String
+  skill        Skill          @relation(fields: [skill_id], references: [id], onDelete: Cascade)
+  teacher_id   String
+  teacher      User           @relation(fields: [teacher_id], references: [id], onDelete: Cascade, name: "TeacherSession")
+  learner_id   String
+  learner      User           @relation(fields: [learner_id], references: [id], onDelete: Cascade, name: "LearnerSession")
+  session_date DateTime
+  start_time   String
+  end_time     String
+  status       SESSION_STATUS
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@map("sessions")
+}
+
+model Availability {
+  id         String              @id @default(uuid())
+  teacher_id String
+  day        WEEKDAYS
+  start_time String
+  end_time   String
+  status     AVAILABILITY_STATUS
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  reviewer_id String
+  reviewer    User     @relation(fields: [reviewer_id], references: [id], onDelete: Cascade)
+  rating      String
+  feedback    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("reviews")
+}

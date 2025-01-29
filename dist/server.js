@@ -17,7 +17,7 @@ const config_1 = require("./app/config");
 let server;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     server = app_1.default.listen(config_1.local_config.port, () => {
-        console.log("Hekto Server Running on port: ", config_1.local_config.port);
+        console.log("Server Running on port: ", config_1.local_config.port);
     });
 });
 main();

@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import { ZodError } from "zod";
 import http_error from "../errors/http_error";
 import sanitize_prisma_error from "../errors/prisma_error";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const global_error = (err: any, req: Request, res: Response, next: NextFunction) => {
     const success: boolean = false;
@@ -13,7 +14,7 @@ const global_error = (err: any, req: Request, res: Response, next: NextFunction)
     // console.log(err);
     if (err instanceof ZodError) {
       message = "Validation failed, check the input data for errors.";
-    } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    } else if (err instanceof PrismaClientKnownRequestError) {
       const prismaError = sanitize_prisma_error(err);
       message = prismaError.message;
       status = prismaError.statusCode;

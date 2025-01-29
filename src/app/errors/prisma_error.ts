@@ -1,6 +1,6 @@
-import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-const sanitize_prisma_error = (error: Prisma.PrismaClientKnownRequestError) => {
+const sanitize_prisma_error = (error: PrismaClientKnownRequestError) => {
   switch (error.code) {
     case "P2025":
       return { statusCode: 404, message: error?.message };

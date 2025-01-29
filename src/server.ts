@@ -6,7 +6,7 @@ let server: Server;
 
 const main = async () => {
   server = app.listen(local_config.port, () => {
-    console.log("Hekto Server Running on port: ", local_config.port);
+    console.log("Server Running on port: ", local_config.port);
   });
 };
 

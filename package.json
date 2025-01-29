@@ -1,5 +1,5 @@
 {
-  "name": "hekto_server",
+  "name": "skill_sync",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -25,7 +25,9 @@
     "@types/express": "^5.0.0",
     "@types/http-status": "^1.1.2",
     "@types/node": "^22.10.1",
+    "prisma": "^6.3.0",
+    "tsc": "^2.0.4",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   }
 }
