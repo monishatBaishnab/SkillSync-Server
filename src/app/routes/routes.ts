@@ -3,6 +3,7 @@ import { auth_routes } from "../modules/auth/auth.routes";
 import { skill_routes } from "../modules/skill/skill.routes";
 import { session_routes } from "../modules/session/session.routes";
 import { review_routes } from "../modules/review/review.routes";
+import { availability_routes } from "../modules/availability/availability.routes";
 
 const route_config = [
   {
@@ -20,6 +21,10 @@ const route_config = [
   {
     path: "/review",
     route: review_routes,
+  },
+  {
+    path: "/availabilities",
+    route: availability_routes,
   },
 ];
 const router = Router();

@@ -6,6 +6,7 @@ const auth_routes_1 = require("../modules/auth/auth.routes");
 const skill_routes_1 = require("../modules/skill/skill.routes");
 const session_routes_1 = require("../modules/session/session.routes");
 const review_routes_1 = require("../modules/review/review.routes");
+const availability_routes_1 = require("../modules/availability/availability.routes");
 const route_config = [
     {
         path: "/auth",
@@ -22,6 +23,10 @@ const route_config = [
     {
         path: "/review",
         route: review_routes_1.review_routes,
+    },
+    {
+        path: "/availabilities",
+        route: availability_routes_1.availability_routes,
     },
 ];
 const router = (0, express_1.Router)();
