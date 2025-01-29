@@ -1,0 +1,1 @@
+type USER_ROLES = "LEARNER" | "TEACHER" | "ADMIN";

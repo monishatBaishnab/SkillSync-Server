@@ -6,6 +6,7 @@ import httpStatus from "http-status";
 import catch_async from "./app/utils/catch_async";
 import not_found from "./app/middlewares/not_found";
 import global_error from "./app/middlewares/global_error";
+import { routes } from "./app/routes/routes";
 
 // Create an instance of the Express application
 const app = express();
@@ -21,6 +22,8 @@ app.use(
     origin: ["*"],
   })
 );
+
+app.use("/api/v1/", routes);
 
 // Define a GET route for the root URL
 app.get(

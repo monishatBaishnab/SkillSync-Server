@@ -11,6 +11,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const catch_async_1 = __importDefault(require("./app/utils/catch_async"));
 const not_found_1 = __importDefault(require("./app/middlewares/not_found"));
 const global_error_1 = __importDefault(require("./app/middlewares/global_error"));
+const routes_1 = require("./app/routes/routes");
 // Create an instance of the Express application
 const app = (0, express_1.default)();
 // Middlewares to parse json and cookies
@@ -21,6 +22,7 @@ app.use((0, cors_1.default)({
     credentials: true,
     origin: ["*"],
 }));
+app.use("/api/v1/", routes_1.routes);
 // Define a GET route for the root URL
 app.get("/", (0, catch_async_1.default)((req, res) => {
     (0, send_response_1.default)(res, {

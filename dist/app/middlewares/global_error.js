@@ -8,13 +8,17 @@ const zod_1 = require("zod");
 const http_error_1 = __importDefault(require("../errors/http_error"));
 const prisma_error_1 = __importDefault(require("../errors/prisma_error"));
 const library_1 = require("@prisma/client/runtime/library");
+const zod_error_1 = __importDefault(require("../errors/zod_error"));
 const global_error = (err, req, res, next) => {
     const success = false;
     let status = (err === null || err === void 0 ? void 0 : err.statusCode) || http_status_1.default.BAD_REQUEST;
     let message = (err === null || err === void 0 ? void 0 : err.name) || "Something want wrong.";
-    // console.log(err);
+    let errorMessages;
     if (err instanceof zod_1.ZodError) {
-        message = "Validation failed, check the input data for errors.";
+        const simplifiedError = (0, zod_error_1.default)(err);
+        status = simplifiedError === null || simplifiedError === void 0 ? void 0 : simplifiedError.statusCode;
+        message = simplifiedError === null || simplifiedError === void 0 ? void 0 : simplifiedError.message;
+        errorMessages = simplifiedError === null || simplifiedError === void 0 ? void 0 : simplifiedError.errorMessages;
     }
     else if (err instanceof library_1.PrismaClientKnownRequestError) {
         const prismaError = (0, prisma_error_1.default)(err);
@@ -29,6 +33,7 @@ const global_error = (err, req, res, next) => {
         success,
         status,
         message,
+        errorMessages,
     });
 };
 exports.default = global_error;

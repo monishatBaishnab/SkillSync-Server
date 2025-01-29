@@ -9,4 +9,5 @@ const path_1 = __importDefault(require("path"));
 dotenv_1.default.config({ path: path_1.default.join(process.cwd(), ".env") });
 exports.local_config = {
     port: process.env.PORT,
+    jwt_secret: process.env.JWT_SECRET,
 };
