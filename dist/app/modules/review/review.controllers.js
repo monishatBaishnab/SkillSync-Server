@@ -16,45 +16,35 @@ exports.review_controllers = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const send_response_1 = __importDefault(require("../../utils/send_response"));
 const catch_async_1 = __importDefault(require("../../utils/catch_async"));
+const review_services_1 = require("./review.services");
 // Controller for fetch all reviews
 const fetch_all = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield review_services_1.review_services.fetch_all_from_db(req.query);
     (0, send_response_1.default)(res, {
         status: http_status_1.default.OK,
-        message: "",
-    });
-}));
-// Controller for fetch single review
-const fetch_single = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, send_response_1.default)(res, {
-        status: http_status_1.default.OK,
-        message: "",
+        message: "Reviews fetched successfully.",
+        data: result,
     });
 }));
 // Controller for create one review
 const create_one = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield review_services_1.review_services.create_one_in_db(req.body);
     (0, send_response_1.default)(res, {
-        status: http_status_1.default.OK,
-        message: "",
+        status: http_status_1.default.CREATED,
+        message: "Review created successfully.",
+        data: result,
     });
 }));
 // Controller for update one review
 const update_one = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield review_services_1.review_services.update_one_from_db(req.body, req.params.id);
     (0, send_response_1.default)(res, {
         status: http_status_1.default.OK,
-        message: "",
-    });
-}));
-// Controller for delete one review
-const delete_one = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, send_response_1.default)(res, {
-        status: http_status_1.default.OK,
-        message: "",
+        message: "Review deleted successfully.",
     });
 }));
 exports.review_controllers = {
     fetch_all,
-    fetch_single,
     create_one,
     update_one,
-    delete_one,
 };
