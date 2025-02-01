@@ -11,6 +11,7 @@ const generate_token = (payload, secret) => {
         id: payload.id,
         email: payload.email,
         role: payload.role,
+        name: payload.name,
     };
     const token = jsonwebtoken_1.default.sign(tokenData, secret, { expiresIn: "5d" });
     return token;

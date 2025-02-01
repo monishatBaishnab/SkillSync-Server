@@ -26,13 +26,26 @@ const fetch_all_from_db = (query) => __awaiter(void 0, void 0, void 0, function*
     // Sanitize query parameters for pagination and sorting
     const { page, limit, skip, sortBy, sortOrder } = (0, sanitize_paginate_1.default)(query);
     // Build filtering conditions based on query parameters (e.g., filtering by 'name' or 'category')
-    const whereConditions = (0, wc_builder_1.default)(query, ["name"], ["name", "category"]);
+    const whereConditions = (0, wc_builder_1.default)(query, ["name"], ["user_id", "name", "category"]);
     // Fetch skills with applied filters, pagination, and sorting
     const skills = yield prisma_1.default.skill.findMany({
         where: { AND: [{ AND: whereConditions }] },
         skip,
         take: limit,
         orderBy: { [sortBy]: sortOrder },
+        include: {
+            user: {
+                select: {
+                    name: true,
+                },
+            },
+            Availability: {
+                select: {
+                    id: true,
+                    status: true,
+                },
+            },
+        },
     });
     // Count total skills matching the query (ignoring pagination)
     const total = yield prisma_1.default.skill.count({

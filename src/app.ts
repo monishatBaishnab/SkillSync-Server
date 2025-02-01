@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: ["*"],
+    origin: ["http://localhost:3000", "https://skill-sync-eight.vercel.app"],
   })
 );
 
@@ -32,7 +32,7 @@ app.get(
     send_response(res, {
       success: true,
       status: httpStatus.OK,
-      message: "Hekto Server Running Smoothly.",
+      message: "Server Running Smoothly.",
     });
   })
 );

@@ -35,7 +35,17 @@ const register = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void
         data: result
     });
 }));
+// Controller for update profile
+const update_one = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_services_1.auth_services.update_one(req.body, req.params.id);
+    (0, send_response_1.default)(res, {
+        status: http_status_1.default.OK,
+        message: "Profile update successfully..",
+        data: result
+    });
+}));
 exports.auth_controllers = {
     login,
     register,
+    update_one
 };

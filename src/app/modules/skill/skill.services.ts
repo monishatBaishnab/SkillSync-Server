@@ -16,7 +16,11 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
   const { page, limit, skip, sortBy, sortOrder } = sanitize_paginate(query);
 
   // Build filtering conditions based on query parameters (e.g., filtering by 'name' or 'category')
-  const whereConditions = wc_builder(query, ["name"], ["name", "category"]);
+  const whereConditions = wc_builder(
+    query,
+    ["name"],
+    ["user_id", "name", "category"],
+  );
 
   // Fetch skills with applied filters, pagination, and sorting
   const skills = await prisma.skill.findMany({
@@ -24,6 +28,19 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
     skip,
     take: limit,
     orderBy: { [sortBy]: sortOrder },
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+      Availability: {
+        select: {
+          id: true,
+          status: true,
+        },
+      },
+    },
   });
 
   // Count total skills matching the query (ignoring pagination)
@@ -42,7 +59,7 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
  */
 const fetch_all_by_user_from_db = async (
   query: Record<string, unknown>,
-  user: JwtPayload
+  user: JwtPayload,
 ) => {
   // Sanitize query parameters for pagination and sorting
   const { page, limit, skip, sortBy, sortOrder } = sanitize_paginate(query);
@@ -89,7 +106,7 @@ const fetch_single_from_db = async (skill_id: string) => {
 const create_one_in_db = async (
   payload: Skill,
   file: TFile,
-  user: JwtPayload
+  user: JwtPayload,
 ) => {
   const skill_data: Skill = { ...payload, user_id: user.id };
 
@@ -117,7 +134,7 @@ const create_one_in_db = async (
 const update_one_from_db = async (
   payload: Partial<Skill>,
   file: TFile,
-  skill_id: string
+  skill_id: string,
 ) => {
   const skill_data: Partial<Skill> = { ...payload };
 

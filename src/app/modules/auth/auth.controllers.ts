@@ -21,8 +21,18 @@ const register = catch_async(async (req, res) => {
     data: result
   });
 });
+// Controller for update profile
+const update_one = catch_async(async (req, res) => {
+  const result = await auth_services.update_one(req.body, req.params.id);
+  send_response(res, {
+    status: httpStatus.OK,
+    message: "Profile update successfully..",
+    data: result
+  });
+});
 
 export const auth_controllers = {
   login,
   register,
+  update_one
 };

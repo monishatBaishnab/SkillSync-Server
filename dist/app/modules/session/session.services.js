@@ -25,7 +25,7 @@ const fetch_all_from_db = (query) => __awaiter(void 0, void 0, void 0, function*
     // Sanitize query parameters for pagination and sorting
     const { page, limit, skip, sortBy, sortOrder } = (0, sanitize_paginate_1.default)(query);
     // Build filtering conditions based on query parameters (e.g., filtering by 'name')
-    const whereConditions = (0, wc_builder_1.default)(query, ["name"], ["name"]);
+    const whereConditions = (0, wc_builder_1.default)(query, [], ["teacher_id", "learner_id"]);
     // Fetch sessions with applied filters, pagination, sorting, and nested data
     const sessions = yield prisma_1.default.session.findMany({
         where: {
@@ -37,6 +37,17 @@ const fetch_all_from_db = (query) => __awaiter(void 0, void 0, void 0, function*
         skip: skip,
         take: limit,
         orderBy: { [sortBy]: sortOrder },
+        include: {
+            teacher: {
+                select: { name: true, id: true },
+            },
+            learner: {
+                select: { name: true, id: true },
+            },
+            skill: {
+                select: { name: true, id: true },
+            },
+        },
     });
     // Count total sessions matching the query (ignoring pagination)
     const total = yield prisma_1.default.session.count({
@@ -55,8 +66,18 @@ const fetch_all_from_db = (query) => __awaiter(void 0, void 0, void 0, function*
  * @returns The newly created session record.
  */
 const create_one_in_db = (session_payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const session_data = Object.assign({}, session_payload);
+    session_data === null || session_data === void 0 ? true : delete session_data.availability_id;
     const created_session = yield prisma_1.default.session.create({
-        data: session_payload,
+        data: session_data,
+    });
+    yield prisma_1.default.availability.update({
+        where: {
+            id: session_payload === null || session_payload === void 0 ? void 0 : session_payload.availability_id,
+        },
+        data: {
+            status: "BOOKED",
+        },
     });
     return created_session;
 });

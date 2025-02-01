@@ -20,7 +20,7 @@ app.use((0, cookie_parser_1.default)());
 // Enable Cross-Origin Resource Sharing (CORS) with specified options
 app.use((0, cors_1.default)({
     credentials: true,
-    origin: ["*"],
+    origin: ["http://localhost:3000", "https://skill-sync-eight.vercel.app"],
 }));
 app.use("/api/v1/", routes_1.routes);
 // Define a GET route for the root URL
@@ -28,7 +28,7 @@ app.get("/", (0, catch_async_1.default)((req, res) => {
     (0, send_response_1.default)(res, {
         success: true,
         status: http_status_1.default.OK,
-        message: "Hekto Server Running Smoothly.",
+        message: "Server Running Smoothly.",
     });
 }));
 // Middleware to handle 404 (Not Found) errors

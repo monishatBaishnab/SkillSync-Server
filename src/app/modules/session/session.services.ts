@@ -13,7 +13,7 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
   const { page, limit, skip, sortBy, sortOrder } = sanitize_paginate(query);
 
   // Build filtering conditions based on query parameters (e.g., filtering by 'name')
-  const whereConditions = wc_builder(query, ["name"], ["name"]);
+  const whereConditions = wc_builder(query, [], ["teacher_id", "learner_id"]);
 
   // Fetch sessions with applied filters, pagination, sorting, and nested data
   const sessions = await prisma.session.findMany({
@@ -26,6 +26,17 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
     skip: skip,
     take: limit,
     orderBy: { [sortBy]: sortOrder },
+    include: {
+      teacher: {
+        select: { name: true, id: true },
+      },
+      learner: {
+        select: { name: true, id: true },
+      },
+      skill: {
+        select: { name: true, id: true },
+      },
+    },
   });
 
   // Count total sessions matching the query (ignoring pagination)
@@ -46,9 +57,22 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
  * @param session_payload - The session details, including optional duration.
  * @returns The newly created session record.
  */
-const create_one_in_db = async (session_payload: Session) => {
+const create_one_in_db = async (
+  session_payload: Session & { availability_id?: string },
+) => {
+  const session_data = { ...session_payload };
+  delete session_data?.availability_id;
   const created_session = await prisma.session.create({
-    data: session_payload,
+    data: session_data,
+  });
+
+  await prisma.availability.update({
+    where: {
+      id: session_payload?.availability_id,
+    },
+    data: {
+      status: "BOOKED",
+    },
   });
 
   return created_session;
@@ -62,7 +86,7 @@ const create_one_in_db = async (session_payload: Session) => {
  */
 const update_one_from_db = async (
   payload: Partial<Session>,
-  session_id: string
+  session_id: string,
 ) => {
   // Ensure the session exists before attempting to update
   await prisma.session.findUniqueOrThrow({

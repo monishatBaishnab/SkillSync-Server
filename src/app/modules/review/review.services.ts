@@ -21,7 +21,7 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
 
 const create_one_in_db = async (payload: Review) => {
   const created_review = await prisma.review.create({
-    data: payload,
+    data: { ...payload, rating: String(payload?.rating) },
   });
 
   return created_review;
@@ -29,7 +29,7 @@ const create_one_in_db = async (payload: Review) => {
 
 const update_one_from_db = async (
   payload: Partial<Skill>,
-  review_id: string
+  review_id: string,
 ) => {
   await prisma.review.findUniqueOrThrow({
     where: { id: review_id },

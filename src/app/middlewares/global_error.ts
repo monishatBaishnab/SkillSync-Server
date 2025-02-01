@@ -33,6 +33,8 @@ const global_error = (
     message = err.message;
   }
 
+  console.log(err);
+
   res.status(status).send({
     success,
     status,

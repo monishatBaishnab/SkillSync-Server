@@ -44,7 +44,20 @@ const register_user = (payload) => __awaiter(void 0, void 0, void 0, function* (
     const token = (0, jwt_handlers_1.generate_token)(created_user, config_1.local_config.jwt_secret);
     return { token };
 });
+// Service function for register user
+const update_one = (payload, id) => __awaiter(void 0, void 0, void 0, function* () {
+    const user_data = Object.assign({}, payload);
+    delete user_data.password;
+    delete user_data.email;
+    const created_user = yield prisma_1.default.user.update({
+        data: user_data,
+        where: { id },
+    });
+    const token = (0, jwt_handlers_1.generate_token)(created_user, config_1.local_config.jwt_secret);
+    return { token };
+});
 exports.auth_services = {
     login_user,
     register_user,
+    update_one
 };

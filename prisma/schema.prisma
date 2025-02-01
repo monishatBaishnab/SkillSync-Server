@@ -2,9 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// prisma/schema.prisma
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 enum USER_ROLE {
@@ -71,7 +74,7 @@ model Session {
   session_date String
   start_time   String
   end_time     String
-  status       SESSION_STATUS
+  status       SESSION_STATUS @default(SCHEDULED)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   isDeleted    Boolean        @default(false)

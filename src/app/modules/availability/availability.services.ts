@@ -15,7 +15,11 @@ import wc_builder from "../../utils/wc_builder";
 const fetch_all_from_db = async (query: Record<string, unknown>) => {
   // Sanitize query parameters for pagination and sorting
   const { page, limit, skip, sortBy, sortOrder } = sanitize_paginate(query);
-  const whereConditions = wc_builder(query, ["date"], ["date"]);
+  const whereConditions = wc_builder(
+    query,
+    ["date"],
+    ["date", "teacher_id", "skill_id"],
+  );
 
   // Fetch availabilities that belong to the user with applied filters
   const availabilities = await prisma.availability.findMany({
@@ -23,8 +27,19 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
     skip,
     take: limit,
     orderBy: { [sortBy]: sortOrder },
+    include: {
+      skill: {
+        select: {
+          name: true,
+        },
+      },
+      teacher: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
-
   // Count total availabilities matching the query for the specific user
   const total = await prisma.availability.count({
     where: { AND: whereConditions },
@@ -40,7 +55,7 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
  * @returns An array of created availability session slots.
  */
 const create_one_in_db = async (
-  session_payload: Availability & { duration?: string }
+  session_payload: Availability & { duration?: string },
 ) => {
   // Fetch skill details associated with the session
   const skill_details = await prisma.skill.findUniqueOrThrow({
@@ -60,7 +75,7 @@ const create_one_in_db = async (
   if (!is_date_valid) {
     throw new http_error(
       NOT_FOUND,
-      "The date is invalid. It cannot be a past date."
+      "The date is invalid. It cannot be a past date.",
     );
   }
 
@@ -69,15 +84,39 @@ const create_one_in_db = async (
     throw new http_error(NOT_FOUND, "Skill not found.");
   }
 
-  // Check for overlapping session slots
-  existing_sessions.forEach((existing_session) => {
-    const existing_start = new Date(
-      `1970-01-01T${existing_session.start_time}`
-    );
-    const new_start = new Date(`1970-01-01T${session_payload.start_time}`);
-    const existing_end = new Date(`1970-01-01T${existing_session.end_time}`);
-    const new_end = new Date(`1970-01-01T${session_payload.end_time}`);
+  // Helper function to convert 12-hour format to 24-hour format
+  const to24HourFormat = (timeString: string) => {
+    const [time, period] = timeString.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
 
+    if (period === "PM" && hours !== 12) {
+      hours += 12;
+    } else if (period === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0",
+    )}`;
+  };
+
+  existing_sessions.forEach((existing_session) => {
+    // Convert the time strings to 24-hour format if necessary
+    const existing_start_time = to24HourFormat(existing_session.start_time);
+    const new_start_time = to24HourFormat(session_payload.start_time);
+    const existing_end_time = to24HourFormat(existing_session.end_time);
+    const new_end_time = to24HourFormat(session_payload.end_time);
+
+    // Create the full ISO date string for comparison (using a fixed date of 1970-01-01)
+    const existing_start = new Date(
+      `1970-01-01T${existing_start_time}:00.000Z`,
+    );
+    const new_start = new Date(`1970-01-01T${new_start_time}:00.000Z`);
+    const existing_end = new Date(`1970-01-01T${existing_end_time}:00.000Z`);
+    const new_end = new Date(`1970-01-01T${new_end_time}:00.000Z`);
+
+    // Check for overlapping sessions
     if (existing_start < new_end && existing_end > new_start) {
       throw new http_error(CONFLICT, "Slot overlaps with an existing session.");
     }
@@ -88,7 +127,7 @@ const create_one_in_db = async (
   const time_slots = create_time_slot(
     session_payload.start_time,
     session_payload.end_time,
-    Number(session_payload.duration)
+    Number(session_payload.duration),
   );
 
   delete session_payload.duration;

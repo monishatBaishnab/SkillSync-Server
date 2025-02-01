@@ -15,6 +15,7 @@ export const generate_token = (payload: User, secret: Secret) => {
     id: payload.id,
     email: payload.email,
     role: payload.role,
+    name: payload.name,
   };
   const token = jwt.sign(tokenData, secret, { expiresIn: "5d" });
   return token;

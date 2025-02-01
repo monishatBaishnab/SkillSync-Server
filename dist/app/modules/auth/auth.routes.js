@@ -14,5 +14,6 @@ const router = (0, express_1.Router)();
 router.post("/login", (0, validate_body_1.default)(auth_schemas_1.auth_schemas.login), auth_controllers_1.auth_controllers.login);
 // Register route
 router.post("/register", (0, validate_body_1.default)(auth_schemas_1.auth_schemas.create), auth_controllers_1.auth_controllers.register);
+router.put("/update-profile/:id", (0, validate_body_1.default)(auth_schemas_1.auth_schemas.update), auth_controllers_1.auth_controllers.update_one);
 // Export routes as auth_route
 exports.auth_routes = router;

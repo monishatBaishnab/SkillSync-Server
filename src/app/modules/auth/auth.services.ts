@@ -16,7 +16,7 @@ const login_user = async (payload: { email: string; password: string }) => {
 
   const verify_password = bcrypt.compareSync(
     payload.password,
-    user_info.password
+    user_info.password,
   );
   if (!verify_password) {
     throw new http_error(httpStatus.BAD_REQUEST, "Password Not Match.");
@@ -41,8 +41,24 @@ const register_user = async (payload: User) => {
 
   return { token };
 };
+// Service function for register user
+const update_one = async (payload: Partial<User>, id: string) => {
+  const user_data = { ...payload };
+
+  delete user_data.password;
+  delete user_data.email;
+  const created_user = await prisma.user.update({
+    data: user_data,
+    where: { id },
+  });
+
+  const token = generate_token(created_user, local_config.jwt_secret as string);
+
+  return { token };
+};
 
 export const auth_services = {
   login_user,
   register_user,
+  update_one
 };

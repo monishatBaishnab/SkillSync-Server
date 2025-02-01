@@ -30,7 +30,7 @@ const fetch_all_from_db = (query) => __awaiter(void 0, void 0, void 0, function*
 });
 const create_one_in_db = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const created_review = yield prisma_1.default.review.create({
-        data: payload,
+        data: Object.assign(Object.assign({}, payload), { rating: String(payload === null || payload === void 0 ? void 0 : payload.rating) }),
     });
     return created_review;
 });

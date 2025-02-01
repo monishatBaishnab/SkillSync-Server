@@ -20,5 +20,11 @@ router.post(
   auth_controllers.register
 );
 
+router.put(
+  "/update-profile/:id",
+  validate_body(auth_schemas.update),
+  auth_controllers.update_one
+);
+
 // Export routes as auth_route
 export const auth_routes = router;
