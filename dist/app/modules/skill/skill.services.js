@@ -45,6 +45,9 @@ const fetch_all_from_db = (query) => __awaiter(void 0, void 0, void 0, function*
                     status: true,
                 },
             },
+            Session: {
+                include: { learner: { select: { id: true, name: true } } },
+            },
         },
     });
     // Count total skills matching the query (ignoring pagination)

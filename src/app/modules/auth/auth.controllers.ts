@@ -9,7 +9,7 @@ const login = catch_async(async (req, res) => {
   send_response(res, {
     status: httpStatus.OK,
     message: "Login Successful.",
-    data: result
+    data: result,
   });
 });
 // Controller for register
@@ -18,7 +18,7 @@ const register = catch_async(async (req, res) => {
   send_response(res, {
     status: httpStatus.OK,
     message: "Register Successful.",
-    data: result
+    data: result,
   });
 });
 // Controller for update profile
@@ -27,12 +27,23 @@ const update_one = catch_async(async (req, res) => {
   send_response(res, {
     status: httpStatus.OK,
     message: "Profile update successfully..",
-    data: result
+    data: result,
+  });
+});
+
+// Controller for update profile
+const fetch_available_teachers = catch_async(async (req, res) => {
+  const result = await auth_services.fetch_available_teachers(req.query);
+  send_response(res, {
+    status: httpStatus.OK,
+    message: "Fetched available teachers..",
+    data: result,
   });
 });
 
 export const auth_controllers = {
   login,
   register,
-  update_one
+  update_one,
+  fetch_available_teachers,
 };

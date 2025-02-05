@@ -25,6 +25,10 @@ router.put(
   validate_body(auth_schemas.update),
   auth_controllers.update_one
 );
+router.get(
+  "/available-teachers",
+  auth_controllers.fetch_available_teachers
+);
 
 // Export routes as auth_route
 export const auth_routes = router;

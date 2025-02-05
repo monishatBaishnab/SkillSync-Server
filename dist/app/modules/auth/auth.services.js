@@ -19,6 +19,7 @@ const jwt_handlers_1 = require("../../utils/jwt_handlers");
 const config_1 = require("../../config");
 const http_error_1 = __importDefault(require("../../errors/http_error"));
 const http_status_1 = __importDefault(require("http-status"));
+const sanitize_paginate_1 = __importDefault(require("../../utils/sanitize_paginate"));
 // Service function for login user
 const login_user = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user_info = yield prisma_1.default.user.findUniqueOrThrow({
@@ -56,8 +57,42 @@ const update_one = (payload, id) => __awaiter(void 0, void 0, void 0, function* 
     const token = (0, jwt_handlers_1.generate_token)(created_user, config_1.local_config.jwt_secret);
     return { token };
 });
+const fetch_available_teachers = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page, limit, skip, sortBy, sortOrder } = (0, sanitize_paginate_1.default)(query);
+    const teachers = yield prisma_1.default.user.findMany({
+        where: {
+            isDeleted: false,
+            Availability: {
+                some: {
+                    status: "AVAILABLE",
+                    isDeleted: false,
+                },
+            },
+        },
+        skip,
+        take: limit,
+        orderBy: { [sortBy]: sortOrder },
+        include: {
+            Availability: { select: { id: true, date: true } },
+        },
+    });
+    // Count total availabilities matching the query for the specific user
+    const total = yield prisma_1.default.user.count({
+        where: {
+            isDeleted: false,
+            Availability: {
+                some: {
+                    status: "AVAILABLE",
+                    isDeleted: false,
+                },
+            },
+        },
+    });
+    return { teachers, meta: { page, limit, total } };
+});
 exports.auth_services = {
     login_user,
     register_user,
-    update_one
+    update_one,
+    fetch_available_teachers,
 };

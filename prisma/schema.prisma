@@ -4,8 +4,8 @@ generator client {
 
 // prisma/schema.prisma
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
   // uncomment next line if you use Prisma <5.10
   // directUrl = env("DATABASE_URL_UNPOOLED")
 }
@@ -59,6 +59,7 @@ model Skill {
   isDeleted    Boolean        @default(false)
   Session      Session[]
   Availability Availability[]
+  Review       Review[]
 
   @@map("skills")
 }
@@ -101,6 +102,8 @@ model Availability {
 
 model Review {
   id          String   @id @default(uuid())
+  skill_id    String
+  skill       Skill    @relation(fields: [skill_id], references: [id], onDelete: Cascade)
   reviewer_id String
   reviewer    User     @relation(fields: [reviewer_id], references: [id], onDelete: Cascade)
   rating      String

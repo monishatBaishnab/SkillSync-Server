@@ -5,6 +5,7 @@ import { generate_token } from "../../utils/jwt_handlers";
 import { local_config } from "../../config";
 import http_error from "../../errors/http_error";
 import httpStatus from "http-status";
+import sanitize_paginate from "../../utils/sanitize_paginate";
 
 // Service function for login user
 const login_user = async (payload: { email: string; password: string }) => {
@@ -57,8 +58,45 @@ const update_one = async (payload: Partial<User>, id: string) => {
   return { token };
 };
 
+const fetch_available_teachers = async (query: Record<string, unknown>) => {
+  const { page, limit, skip, sortBy, sortOrder } = sanitize_paginate(query);
+  const teachers = await prisma.user.findMany({
+    where: {
+      isDeleted: false,
+      Availability: {
+        some: {
+          status: "AVAILABLE",
+          isDeleted: false,
+        },
+      },
+    },
+    skip,
+    take: limit,
+    orderBy: { [sortBy]: sortOrder },
+    include: {
+      Availability: { select: { id: true, date: true } },
+    },
+  });
+
+  // Count total availabilities matching the query for the specific user
+  const total = await prisma.user.count({
+    where: {
+      isDeleted: false,
+      Availability: {
+        some: {
+          status: "AVAILABLE",
+          isDeleted: false,
+        },
+      },
+    },
+  });
+
+  return { teachers, meta: { page, limit, total } };
+};
+
 export const auth_services = {
   login_user,
   register_user,
-  update_one
+  update_one,
+  fetch_available_teachers,
 };

@@ -40,6 +40,9 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
           status: true,
         },
       },
+      Session: {
+        include: { learner: { select: { id: true, name: true } } },
+      },
     },
   });
 

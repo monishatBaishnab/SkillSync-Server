@@ -20,8 +20,15 @@ const fetch_all_from_db = async (query: Record<string, unknown>) => {
 };
 
 const create_one_in_db = async (payload: Review) => {
+  console.log(payload);
+
   const created_review = await prisma.review.create({
-    data: { ...payload, rating: String(payload?.rating) },
+    data: {
+      feedback: payload.feedback,
+      reviewer_id: payload.reviewer_id,
+      skill_id: payload.skill_id,
+      rating: String(payload?.rating),
+    },
   });
 
   return created_review;

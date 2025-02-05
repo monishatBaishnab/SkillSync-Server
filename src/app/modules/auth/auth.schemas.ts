@@ -19,6 +19,11 @@ const login = z.object({
   password: z.string({ message: "User Password Required." }),
 });
 
+const fetch_available_teachers = z.object({
+  email: z.string({ message: "User Email Required." }).email().max(100),
+  password: z.string({ message: "User Password Required." }),
+});
+
 export const auth_schemas = {
   create,
   update,

@@ -18,6 +18,10 @@ const login = zod_1.z.object({
     email: zod_1.z.string({ message: "User Email Required." }).email().max(100),
     password: zod_1.z.string({ message: "User Password Required." }),
 });
+const fetch_available_teachers = zod_1.z.object({
+    email: zod_1.z.string({ message: "User Email Required." }).email().max(100),
+    password: zod_1.z.string({ message: "User Password Required." }),
+});
 exports.auth_schemas = {
     create,
     update,

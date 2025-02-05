@@ -23,7 +23,7 @@ const login = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void 0,
     (0, send_response_1.default)(res, {
         status: http_status_1.default.OK,
         message: "Login Successful.",
-        data: result
+        data: result,
     });
 }));
 // Controller for register
@@ -32,7 +32,7 @@ const register = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void
     (0, send_response_1.default)(res, {
         status: http_status_1.default.OK,
         message: "Register Successful.",
-        data: result
+        data: result,
     });
 }));
 // Controller for update profile
@@ -41,11 +41,21 @@ const update_one = (0, catch_async_1.default)((req, res) => __awaiter(void 0, vo
     (0, send_response_1.default)(res, {
         status: http_status_1.default.OK,
         message: "Profile update successfully..",
-        data: result
+        data: result,
+    });
+}));
+// Controller for update profile
+const fetch_available_teachers = (0, catch_async_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_services_1.auth_services.fetch_available_teachers(req.query);
+    (0, send_response_1.default)(res, {
+        status: http_status_1.default.OK,
+        message: "Fetched available teachers..",
+        data: result,
     });
 }));
 exports.auth_controllers = {
     login,
     register,
-    update_one
+    update_one,
+    fetch_available_teachers,
 };
